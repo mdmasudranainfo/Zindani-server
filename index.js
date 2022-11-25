@@ -12,7 +12,7 @@ app.use(express.json());
 // mongodb config
 
 const uri = `mongodb+srv://${process.env.MONGO_USER}:${process.env.MONGO_PASS}@cluster0.lw6j4eg.mongodb.net/?retryWrites=true&w=majority`;
-console.log(uri);
+
 const client = new MongoClient(uri, {
   useNewUrlParser: true,
   useUnifiedTopology: true,
@@ -48,9 +48,17 @@ async function run() {
       const result = await ProductCollections.find(query).toArray();
       res.send(result);
     });
-    app.get("/producs", async (req, res) => {
-      const category = req.query.category;
+    // get category ways products
+    app.get("/producs/:category", async (req, res) => {
+      const category = req.params.category;
       const query = { category: category };
+      const result = await ProductCollections.find(query).toArray();
+      res.send(result);
+    });
+    // get Seller Products
+    app.get("/myproducts", async (req, res) => {
+      const email = req.query.email;
+      const query = { SallerEmail: req.query.email };
       const result = await ProductCollections.find(query).toArray();
       res.send(result);
     });
