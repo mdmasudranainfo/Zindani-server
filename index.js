@@ -23,6 +23,7 @@ async function run() {
     const userCollections = client.db("zindani").collection("user");
     const categoryCollections = client.db("zindani").collection("category");
     const ProductCollections = client.db("zindani").collection("products");
+    const buyCollections = client.db("zindani").collection("buyingProducts");
 
     //
     //
@@ -33,7 +34,7 @@ async function run() {
     });
     app.post("/user", async (req, res) => {
       const user = req.body;
-      console.log(user);
+
       const result = await userCollections.insertOne(user);
       res.send(result);
     });
@@ -57,9 +58,26 @@ async function run() {
     });
     // get Seller Products
     app.get("/myproducts", async (req, res) => {
+      // seller access
+
+      //
+
       const email = req.query.email;
       const query = { SallerEmail: req.query.email };
       const result = await ProductCollections.find(query).toArray();
+      res.send(result);
+    });
+
+    // buy products
+    app.post("/buyproduct", async (req, res) => {
+      const product = req.body;
+      const result = await buyCollections.insertOne(product);
+      res.send(result);
+    });
+    app.get("/buyproduct", async (req, res) => {
+      const email = req.query.email;
+      const query = { email: email };
+      const result = await buyCollections.find(query).toArray();
       res.send(result);
     });
   } finally {
