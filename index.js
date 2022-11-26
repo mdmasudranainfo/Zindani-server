@@ -1,5 +1,5 @@
 const express = require("express");
-const { MongoClient, ServerApiVersion } = require("mongodb");
+const { MongoClient, ServerApiVersion, ObjectId } = require("mongodb");
 require("dotenv").config();
 const cors = require("cors");
 const app = express();
@@ -58,13 +58,17 @@ async function run() {
     });
     // get Seller Products
     app.get("/myproducts", async (req, res) => {
-      // seller access
-
-      //
-
       const email = req.query.email;
       const query = { SallerEmail: req.query.email };
       const result = await ProductCollections.find(query).toArray();
+      res.send(result);
+    });
+    // delete my product
+    // delete
+    app.delete("/delete/:id", async (req, res) => {
+      const id = req.params.id;
+      const query = { _id: ObjectId(id) };
+      const result = await ProductCollections.deleteOne(query);
       res.send(result);
     });
 
@@ -79,6 +83,36 @@ async function run() {
       const query = { email: email };
       const result = await buyCollections.find(query).toArray();
       res.send(result);
+    });
+
+    // user get
+    app.get("/alluer", async (req, res) => {
+      const query = { role: "user" };
+      const result = await userCollections.find(query).toArray();
+      res.send(result);
+    });
+    // selller get
+    app.get("/seller", async (req, res) => {
+      const query = { role: "seller" };
+      const result = await userCollections.find(query).toArray();
+      res.send(result);
+    });
+
+    // get admin
+    app.get("/role/:email", async (req, res) => {
+      const email = req.params.email;
+      const query = { email: email };
+      const user = await userCollections.findOne(query);
+      // console.log({ isAdmin: user.role === "admin" });
+      res.send({ isAdmin: user.role === "admin" });
+    });
+
+    app.get("/role/:email", async (req, res) => {
+      const email = req.params.email;
+      const query = { email: email };
+      const user = await userCollections.findOne(query);
+      console.log({ isAdmin: user.role === "admin" });
+      res.send({ isAdmin: user.role === "seller" });
     });
   } finally {
   }
