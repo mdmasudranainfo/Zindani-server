@@ -110,6 +110,13 @@ async function run() {
       const result = await ProductCollections.find(query).toArray();
       res.send(result);
     });
+    //
+    // get advrtized products
+    app.get("/advrtized", async (req, res) => {
+      const query = { advrtized: true };
+      const result = await ProductCollections.find(query).toArray();
+      res.send(result);
+    });
     // delete my product
     // delete
     app.delete("/delete/:id", async (req, res) => {
@@ -152,7 +159,7 @@ async function run() {
       const email = req.params.email;
       const query = { email: email };
       const user = await userCollections.findOne(query);
-      console.log({ isAdmin: user.role === "admin" });
+
       res.send({ isAdmin: user.role === "admin" });
     });
 
