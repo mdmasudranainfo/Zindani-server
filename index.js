@@ -38,9 +38,56 @@ async function run() {
       const result = await userCollections.insertOne(user);
       res.send(result);
     });
+
+    // user get
+    app.get("/alluer", async (req, res) => {
+      const query = { role: "user" };
+      const result = await userCollections.find(query).toArray();
+      res.send(result);
+    });
+    //
+    // get single user
+    app.get("/user/:email", async (req, res) => {
+      const query = { email: req.params.email };
+      const result = await userCollections.findOne(query);
+      res.send(result);
+    });
+
+    //
+    // update user role
+    app.put("/user/:id", async (req, res) => {
+      const id = req.params.id;
+      const query = { _id: ObjectId(id) };
+      const options = { upsert: true };
+      const updateDoc = {
+        $set: {
+          verify: true,
+        },
+      };
+      const result = await userCollections.updateOne(query, updateDoc, options);
+      res.send(result);
+    });
+    //
     app.post("/products", async (req, res) => {
       const products = req.body;
       const result = await ProductCollections.insertOne(products);
+      res.send(result);
+    });
+    // update product advrtize
+    app.put("/product/:id", async (req, res) => {
+      const id = req.params.id;
+      const query = { _id: ObjectId(id) };
+      const options = { upsert: true };
+      const updateDoc = {
+        $set: {
+          advrtized: true,
+        },
+      };
+      const result = await ProductCollections.updateOne(
+        query,
+        updateDoc,
+        options
+      );
       res.send(result);
     });
     // all products
@@ -72,6 +119,14 @@ async function run() {
       res.send(result);
     });
 
+    // delete order
+    app.delete("/buydelete/:id", async (req, res) => {
+      const id = req.params.id;
+      const query = { _id: ObjectId(id) };
+      const result = await buyCollections.deleteOne(query);
+      res.send(result);
+    });
+
     // buy products
     app.post("/buyproduct", async (req, res) => {
       const product = req.body;
@@ -85,12 +140,6 @@ async function run() {
       res.send(result);
     });
 
-    // user get
-    app.get("/alluer", async (req, res) => {
-      const query = { role: "user" };
-      const result = await userCollections.find(query).toArray();
-      res.send(result);
-    });
     // selller get
     app.get("/seller", async (req, res) => {
       const query = { role: "seller" };
@@ -103,16 +152,16 @@ async function run() {
       const email = req.params.email;
       const query = { email: email };
       const user = await userCollections.findOne(query);
-      // console.log({ isAdmin: user.role === "admin" });
+      console.log({ isAdmin: user.role === "admin" });
       res.send({ isAdmin: user.role === "admin" });
     });
 
-    app.get("/role/:email", async (req, res) => {
+    app.get("/roles/:email", async (req, res) => {
       const email = req.params.email;
       const query = { email: email };
       const user = await userCollections.findOne(query);
-      console.log({ isAdmin: user.role === "admin" });
-      res.send({ isAdmin: user.role === "seller" });
+
+      res.send({ isSeller: user.role === "seller" });
     });
   } finally {
   }
