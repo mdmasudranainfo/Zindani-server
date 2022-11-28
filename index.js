@@ -52,6 +52,13 @@ async function run() {
       const result = await userCollections.findOne(query);
       res.send(result);
     });
+    //
+    // delete user
+    app.delete("/users/:id", async (req, res) => {
+      const query = { _id: ObjectId(req.params.id) };
+      const result = await userCollections.deleteOne(query);
+      res.send(result);
+    });
 
     //
     // update user role
